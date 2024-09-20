@@ -1,0 +1,14 @@
+{
+  "cartId": "cart1",
+  "items": [
+    {
+      "productId": "p1",
+      "quantity": 2
+    },
+    {
+      "productId": "p2",
+      "quantity": 1
+    }
+  ],
+  "totalPrice": 100
+}
