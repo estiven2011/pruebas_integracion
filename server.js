@@ -67,6 +67,138 @@ app.post('/cart/pay', (req, res) => {
 
 });
 
+// Endpoint para obtener un carrito por ID
+app.get('/cart/:cartId', (req, res) => {
+  const { cartId } = req.params;
+
+  // Buscar el carrito en la lista
+  const cart = carts.find(c => c.cartId === cartId);
+  
+  if (!cart) {
+      return res.status(404).json({
+          error: 'Cart not found',
+          message: `No cart found with the ID: ${cartId}`
+      });
+  }
+
+  res.status(200).json(cart);
+});
+
+
+// Endpoint para actualizar el carrito
+app.put('/cart/update/:cartId', (req, res) => {
+  const { cartId } = req.params;
+  const { items, totalPrice } = req.body;
+
+  // Buscar el carrito en la lista
+  const cartIndex = carts.findIndex(c => c.cartId === cartId);
+  
+  if (cartIndex === -1) {
+      return res.status(404).json({
+          error: 'Cart not found',
+          message: `No cart found with the ID: ${cartId}`
+      });
+  }
+
+  // Actualizar los items y el precio total del carrito
+  carts[cartIndex].items = items;
+  carts[cartIndex].totalPrice = totalPrice;
+
+  res.status(200).json({
+      message: 'Cart updated successfully',
+      cartId: cartId,
+      totalPrice: totalPrice
+  });
+});
+
+app.put('/cart/update/:cartId', (req, res) => {
+  const { cartId } = req.params;
+  const { items, totalPrice } = req.body;
+
+  // Buscar el carrito en la lista
+  const cartIndex = carts.findIndex(c => c.cartId === cartId);
+  
+  if (cartIndex === -1) {
+      return res.status(404).json({
+          error: 'Cart not found',
+          message: `No cart found with the ID: ${cartId}`
+      });
+  }
+
+  // Actualizar solo los campos que se envían en el cuerpo de la solicitud
+  if (items) {
+    carts[cartIndex].items = items;
+  }
+  if (totalPrice) {
+    carts[cartIndex].totalPrice = totalPrice;
+  }
+
+  res.status(200).json({
+      message: 'Cart updated successfully',
+      cartId: cartId,
+      items: carts[cartIndex].items,
+      totalPrice: carts[cartIndex].totalPrice
+  });
+});
+
+// Endpoint para actualizar el cartId de un carrito
+app.put('/cart/update-id/:cartId', (req, res) => {
+  const { cartId } = req.params;
+  const { newCartId } = req.body;
+
+  // Buscar el carrito en la lista
+  const cartIndex = carts.findIndex(c => c.cartId === cartId);
+  
+  if (cartIndex === -1) {
+      return res.status(404).json({
+          error: 'Cart not found',
+          message: `No cart found with the ID: ${cartId}`
+      });
+  }
+
+  // Actualizar el cartId
+  carts[cartIndex].cartId = newCartId;
+
+  res.status(200).json({
+      message: `Cart ID updated successfully from ${cartId} to ${newCartId}`,
+      cart: carts[cartIndex]
+  });
+});
+
+
+// Endpoint para eliminar un carrito
+app.delete('/cart/delete/:cartId', (req, res) => {
+  const { cartId } = req.params;
+
+  // Verificar si el carrito existe
+  const cartIndex = carts.findIndex(c => c.cartId === cartId);
+  if (cartIndex === -1) {
+      return res.status(404).json({
+          error: 'Cart not found',
+          message: `No cart found with the ID: ${cartId}`
+      });
+  }
+
+  // Eliminar el carrito de la lista
+  carts.splice(cartIndex, 1);
+
+  res.status(200).json({
+      message: `Cart with ID: ${cartId} deleted successfully`
+  });
+});
+
+// Endpoint para obtener todos los carritos
+app.get('/cart', (req, res) => {
+  if (carts.length === 0) {
+      return res.status(404).json({
+          error: 'No carts available',
+          message: 'No carts have been added yet.'
+      });
+  }
+  res.status(200).json(carts);
+});
+
+
 // Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
